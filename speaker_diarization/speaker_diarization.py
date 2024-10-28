@@ -15,6 +15,7 @@
 from functools import partial
 from pathlib import Path
 
+import librosa
 import numpy as np
 import soundfile as sf
 from modelscope import model_file_download, snapshot_download
@@ -107,12 +108,17 @@ class SpeakerDiarization:
                 raise ValueError("When audio is an ndarray, rate must be provided.")
         else:
             raise TypeError("Input must be a string, Path, or numpy ndarray.")
+        if rate != self.diarizer.sample_rate:
+            audio = librosa.resample(
+                audio, orig_sr=rate, target_sr=self.diarizer.sample_rate, axis=0
+            )
+            rate = self.diarizer.sample_rate
 
         if show_progress:
             if progress_callback is None:
                 progress_callback = partial(
                     self.progress_callback,
-                    progress_bar=tqdm(desc="Progress:", unit="chunks"),
+                    progress_bar=tqdm(desc="Progress", unit="chunks"),
                 )
             result = self.diarizer.process(audio, callback=progress_callback)
         else:
