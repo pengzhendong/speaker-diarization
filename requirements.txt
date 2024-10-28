@@ -1,0 +1,4 @@
+click
+modelscope
+sherpa-onnx
+soundfile
