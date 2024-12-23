@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import click
+
 from speaker_diarization import SpeakerDiarization
 
 

@@ -63,21 +63,15 @@ class SpeakerDiarization:
         )
         config = OfflineSpeakerDiarizationConfig(
             segmentation=OfflineSpeakerSegmentationModelConfig(
-                pyannote=OfflineSpeakerSegmentationPyannoteModelConfig(
-                    model=segmentation_model
-                ),
+                pyannote=OfflineSpeakerSegmentationPyannoteModelConfig(model=segmentation_model),
             ),
             embedding=SpeakerEmbeddingExtractorConfig(model=embedding_extractor_model),
-            clustering=FastClusteringConfig(
-                num_clusters=num_speakers, threshold=cluster_threshold
-            ),
+            clustering=FastClusteringConfig(num_clusters=num_speakers, threshold=cluster_threshold),
             min_duration_on=0.3,
             min_duration_off=0.5,
         )
         if not config.validate():
-            raise RuntimeError(
-                "Please check your config and make sure all required files exist"
-            )
+            raise RuntimeError("Please check your config and make sure all required files exist")
         self.diarizer = OfflineSpeakerDiarization(config)
 
         asr_model = snapshot_download(asr_model)
@@ -109,9 +103,7 @@ class SpeakerDiarization:
         else:
             raise TypeError("Input must be a string, Path, or numpy ndarray.")
         if rate != self.diarizer.sample_rate:
-            audio = librosa.resample(
-                audio, orig_sr=rate, target_sr=self.diarizer.sample_rate, axis=0
-            )
+            audio = librosa.resample(audio, orig_sr=rate, target_sr=self.diarizer.sample_rate, axis=0)
             rate = self.diarizer.sample_rate
 
         if show_progress:
@@ -138,7 +130,5 @@ class SpeakerDiarization:
                 "event": stream.result.event,
                 "text": stream.result.text,
                 "tokens": stream.result.tokens,
-                "timestamps": [
-                    round(timestamp, 3) for timestamp in stream.result.timestamps
-                ],
+                "timestamps": [round(timestamp, 3) for timestamp in stream.result.timestamps],
             }
